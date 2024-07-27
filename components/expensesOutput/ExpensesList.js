@@ -1,9 +1,16 @@
 import React from "react";
 import { View, Text, FlatList } from "react-native";
+import ExpenseItem from "./ExpenseItem";
+import { getFormattedDate } from "../../utils/date";
 
 function RenderExpenseItem(item) {
-  console.log(item);
-  return <Text>{item.amount}</Text>;
+  return (
+    <ExpenseItem
+      amount={item.amount}
+      date={getFormattedDate(item.date)}
+      desc={item.description}
+    />
+  );
 }
 
 function ExpensesList({ expenses }) {
