@@ -1,10 +1,55 @@
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
+import IconButton from "../components/expensesOutput/IconButton";
+import { EXPENSE_COLORS } from "../utils/styles";
+import Button from "../components/expensesOutput/Button";
 
-function ManageExpenses() {
+function ManageExpenses({ route, navigation }) {
+  const editedExpenseId = route.params?.expenseId;
+
+  //!! is used to confirm truthy of falsy value
+  const isEditing = !!editedExpenseId;
+
+  function deleteExpenseHandler() {
+    navigation.goBack();
+  }
+
+  function cancelHandler() {
+    navigation.goBack();
+  }
+
+  function confirmHandler() {
+    navigation.goBack();
+  }
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: isEditing ? "Edit Expense" : "Add Expense",
+    });
+  }, [navigation, isEditing]);
+
+  //Navigation with set options should be in useLayoutEffect
+
   return (
     <View style={styles.container}>
-      <Text>This is expense screen</Text>
+      <View style={styles.buttonsContainer}>
+        <Button mode="flat" onPress={cancelHandler} style={styles.button}>
+          Cancel
+        </Button>
+        <Button onPress={confirmHandler} style={styles.button}>
+          {isEditing ? "Update" : "Add"}
+        </Button>
+      </View>
+      {isEditing && (
+        <View style={styles.deleteContainer}>
+          <IconButton
+            name="trash"
+            color={EXPENSE_COLORS.colors.error500}
+            size={36}
+            onPress={deleteExpenseHandler}
+          />
+        </View>
+      )}
     </View>
   );
 }
@@ -12,10 +57,25 @@ function ManageExpenses() {
 export default ManageExpenses;
 
 const styles = StyleSheet.create({
+  deleteContainer: {
+    marginTop: 16,
+    paddingTop: 20,
+    borderTopWidth: 2,
+    borderTopColor: EXPENSE_COLORS.colors.primary200,
+    alignItems: "center",
+  },
+  button: {
+    minWidth: 120,
+    marginHorizontal: 8,
+  },
   container: {
     flex: 1,
-    backgroundColor: "#D32F2F",
-    alignItems: "center",
+    padding: 24,
+    backgroundColor: EXPENSE_COLORS.colors.primary800,
+  },
+  buttonsContainer: {
+    flexDirection: "row",
     justifyContent: "center",
+    alignContent: "center",
   },
 });

@@ -1,11 +1,22 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { EXPENSE_COLORS } from "../../utils/styles";
+import { useNavigation } from "@react-navigation/native";
 
-function ExpenseItem({ date, amount, desc }) {
-  console.log(date);
+function ExpenseItem({ date, amount, desc, id }) {
+  const navigation = useNavigation();
+
+  function expensePressHandler() {
+    navigation.navigate("ManageExpenses", {
+      expenseId: id,
+    });
+  }
+
   return (
-    <Pressable>
+    <Pressable
+      style={({ pressed }) => pressed && styles.pressed}
+      onPress={expensePressHandler}
+    >
       <View style={styles.item}>
         <View>
           <Text style={[styles.textBase, styles.description]}>{desc}</Text>
@@ -22,6 +33,10 @@ function ExpenseItem({ date, amount, desc }) {
 export default ExpenseItem;
 
 const styles = StyleSheet.create({
+  pressed: {
+    opacity: 0.75,
+  },
+
   item: {
     padding: 10,
     marginVertical: 8,

@@ -9,6 +9,7 @@ function RenderExpenseItem(item) {
       amount={item.amount}
       date={getFormattedDate(item.date)}
       desc={item.description}
+      id={item.id}
     />
   );
 }

@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import ExpensesOutput from "../components/expensesOutput/ExpensesOutput";
 
 function AllExpensesScreen() {
-  return <ExpensesOutput expensesPeriod="Total" />;
+  
+  return <ExpensesOutput expensesPeriod="Total" expenses={}/>;
 }
 
 export default AllExpensesScreen;
