@@ -60,15 +60,19 @@ function expenseReducer(state, action) {
       const updateExpenseIndex = state.findIndex(
         (expense) => expense.id === action.payload.id
       );
+
+      console.log(updateExpenseIndex);
       const updatableExpense = state[updateExpenseIndex];
+
       const updatedItem = {
         ...updatableExpense,
         ...action.payload.data,
       };
       const updateExpense = [...state];
       updateExpense[updateExpenseIndex] = updatedItem;
+      return updateExpense;
     case "DELETE":
-      return state.filter((expense) => expense.id !== action.payload.id);
+      return state.filter((expense) => expense.id !== action.payload);
     default:
       return state;
   }
