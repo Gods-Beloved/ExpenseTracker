@@ -7,7 +7,11 @@ function AllExpensesScreen() {
   const expensesCtx = useContext(ExpenseContext);
 
   return (
-    <ExpensesOutput expensesPeriod="Total" expenses={expensesCtx.expenses} />
+    <ExpensesOutput
+      expensesPeriod="Total"
+      expenses={expensesCtx.expenses}
+      falbackText="No Registered Expenses Found"
+    />
   );
 }
 

@@ -4,10 +4,19 @@ import ExpensesSummary from "./ExpensesSummary";
 import ExpensesList from "./ExpensesList";
 import { EXPENSE_COLORS } from "../../utils/styles";
 
-function ExpensesOutput({ expenses, expensesPeriod }) {
+function ExpensesOutput({ expenses, expensesPeriod, falbackText }) {
+  let content = <Text style={styles.infoText}>{falbackText}</Text>;
+
+  if (expenses.length > 0) {
+    content = (
+      <ExpensesSummary expenses={expenses} periodName={expensesPeriod} />
+    );
+  }
+
   return (
     <View style={styles.rootContainer}>
-      <ExpensesSummary expenses={expenses} periodName={expensesPeriod} />
+      {content}
+
       <ExpensesList expenses={expenses} />
     </View>
   );
@@ -20,5 +29,11 @@ const styles = StyleSheet.create({
     padding: 24,
     flex: 1,
     backgroundColor: EXPENSE_COLORS.colors.primary700,
+  },
+  infoText: {
+    fontSize: 16,
+    color: "white",
+    textAlign: "center",
+    marginTop: 34,
   },
 });

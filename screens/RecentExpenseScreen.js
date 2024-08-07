@@ -12,7 +12,11 @@ function RecentExpenseScreen() {
     return expenseDate.getDate() >= today.getDate() - 7; // Filter out expenses from the last 7 days
   });
   return (
-    <ExpensesOutput expensesPeriod="Last 7 days" expenses={recentExpenses} />
+    <ExpensesOutput
+      expensesPeriod="Last 7 days"
+      expenses={recentExpenses}
+      falbackText="No Recent File Found"
+    />
   );
 }
 
