@@ -20,32 +20,40 @@ function ExpenseForm({ isEditing }) {
     (expense) => expense.id === editedExpenseId
   );
 
-  const initAmount = selectedExpense
-    ? selectedExpense.amount.toFixed(2).toString()
-    : 0;
-  const initDesc = selectedExpense ? selectedExpense.description : "";
-  const initDate = selectedExpense
-    ? getFormattedDate(selectedExpense.date)
-    : // new Date(selectedExpense.date).toString()
-      "";
+  // const initAmount = selectedExpense
+  //   ? selectedExpense.amount.toFixed(2).toString()
+  //   : 0;
+  // const initDesc = selectedExpense ? selectedExpense.description : "";
+  // const initDate = selectedExpense
+  //   ? getFormattedDate(selectedExpense.date)
+  //   : // new Date(selectedExpense.date).toString()
+  //     "";
 
-  const [amount, setAmount] = useState(initAmount);
-  const [date, setDate] = useState(initDate);
-  const [description, setDescription] = useState(initDesc);
+  const [inputValues, setInputValues] = useState({
+    amount: {
+      value: selectedExpense ? selectedExpense.amount.toString() : "",
+      isValid: true,
+    },
+    date: {
+      value: selectedExpense
+        ? getFormattedDate(selectedExpense.date)
+        : // new Date(selectedExpense.date).toString()
+          "",
+      isValid: true,
+    },
+    description: {
+      value: selectedExpense ? selectedExpense.description : "",
+      isValid: true,
+    },
+  });
 
-  function amountChangedHandler(amt) {
-    setAmount(+amt);
-    // update state with the new amount value
-  }
-
-  function dateChangedHandler(date) {
-    setDate(date);
-    // update state with the new date value
-  }
-
-  function descriptionChangedHandler(dsc) {
-    console.log(dsc);
-    setDescription(dsc);
+  function inputChangedHandler(inputIdentifier, enteredValue) {
+    setInputValues((currentIntVals) => {
+      return {
+        ...currentIntVals,
+        [inputIdentifier]: { value: enteredValue, isValid: true },
+      };
+    });
   }
 
   function cancelHandler() {
@@ -53,27 +61,35 @@ function ExpenseForm({ isEditing }) {
   }
 
   function confirmHandler() {
-    const amountIsValid = !isNaN(amount) && amount > 0;
-    const dateIsValid = new Date(date).toString() !== "Invalid Date";
-    const descriptionIsValid = description.trim() !== "";
+    const expenseData = {
+      description: inputValues.description.value,
+      amount: +inputValues.amount.value,
+      date: new Date(inputValues.date.value),
+    };
+
+    const amountIsValid = !isNaN(expenseData.amount) && expenseData.amount > 0;
+    const dateIsValid = expenseData.date.toString() !== "Invalid Date";
+    const descriptionIsValid = expenseData.description.trim() !== "";
 
     if (!amountIsValid || !dateIsValid || !descriptionIsValid) {
-      Alert.alert("Invalid Input", "Please check your input values");
+      setInputValues((curValue) => {
+        return {
+          amount: { value: curValue.amount.value, isValid: amountIsValid },
+          date: { value: curValue.date.value, isValid: dateIsValid },
+          description: {
+            value: curValue.description.value,
+            isValid: descriptionIsValid,
+          },
+        };
+      });
+      // Alert.alert("Invalid Input", "Please check your input values");
       return;
     }
 
     {
       isEditing
-        ? expenseCtx.updateExpense(editedExpenseId, {
-            description: description,
-            amount: +amount,
-            date: new Date(date),
-          })
-        : expenseCtx.addExpense({
-            description: description,
-            amount: amount,
-            date: new Date(date),
-          });
+        ? expenseCtx.updateExpense(editedExpenseId, expenseData)
+        : expenseCtx.addExpense(expenseData);
     }
 
     // expenseCtx.updateExpense(editedExpenseId, {
@@ -91,22 +107,24 @@ function ExpenseForm({ isEditing }) {
       <View style={styles.inputsRow}>
         <Input
           label="Amount"
+          invalid={!inputValues.amount.isValid}
           textInputConfig={{
             placeholder: "Enter amount",
             keyboardType: "decimal-pad",
-            onChangeText: amountChangedHandler,
+            onChangeText: inputChangedHandler.bind(this, "amount"),
             maxLength: 10,
-            value: amount,
+            value: inputValues.amount.value,
           }}
           style={styles.rowInput}
         />
         <Input
           label="Date"
+          invalid={!inputValues.date.isValid}
           textInputConfig={{
             placeholder: "YYYY-MM-DD",
             maxLength: 10,
-            onChangeText: dateChangedHandler,
-            value: date,
+            onChangeText: inputChangedHandler.bind(this, "date"),
+            value: inputValues.date.value,
           }}
           style={styles.rowInput}
         />
@@ -114,11 +132,12 @@ function ExpenseForm({ isEditing }) {
 
       <Input
         label="Description"
+        invalid={!inputValues.description.isValid}
         textInputConfig={{
           placeholder: "Enter description",
           multiline: true,
-          onChangeText: descriptionChangedHandler,
-          value: description,
+          onChangeText: inputChangedHandler.bind(this, "description"),
+          value: inputValues.description.value,
         }}
       />
 
